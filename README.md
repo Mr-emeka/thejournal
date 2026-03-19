@@ -1,6 +1,6 @@
 # The Journal
 
-#### The journal is a next js 16 blog template to "Start a budget Friendly Blog 2026" 
+## The journal is a next js 16 blog template to "Start a budget Friendly Blog 2026" 
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
