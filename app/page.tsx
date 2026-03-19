@@ -1,65 +1,97 @@
-import Image from "next/image";
+'use client';
+import Footer from "@/components/Footer";
+import Nav from "@/components/Nav";
+import PostCard from "@/components/PostCard";
+import PostCardSkeleton from "@/components/PostCardSkeleton";
+import { fetchAllPosts } from "@/data/api";
+import { useQuery } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
 
 export default function Home() {
+
+    const { data: posts, isLoading, isError } = useQuery({
+    queryKey: ["posts"],
+    queryFn: fetchAllPosts,
+  });
+
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+
+  const categories = useMemo(() => {
+    if (!posts) return [];
+    return Array.from(new Set(posts?.map((p) => p.category)));
+  }, [posts]);
+
+  const filteredPosts = useMemo(() => {
+    if (!posts) return [];
+    if (!activeCategory) return posts;
+    return posts?.filter((p) => p.category === activeCategory);
+  }, [posts, activeCategory]);
+  
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <div className="min-h-screen bg-background">
+      <Nav />
+            {/* Hero */}
+      <header className="container pt-16 pb-12 sm:pt-24 sm:pb-16">
+        <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-foreground">
+          Stories &amp; Insights
+        </h1>
+        <div className="w-16 h-0.5 bg-accent mt-6" />
+      </header>
+
+         {/* Category Filters */}
+      {!isLoading && categories.length > 0 && (
+        <div className="container pb-10">
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={() => setActiveCategory(null)}
+              className={`text-xs uppercase tracking-[0.15em] font-body pb-1 border-b-2 transition-colors ${
+                activeCategory === null
+                  ? "border-accent text-foreground"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+              All
+            </button>
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`text-xs uppercase tracking-[0.15em] font-body pb-1 border-b-2 transition-colors ${
+                  activeCategory === cat
+                    ? "border-accent text-foreground"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Post Grid */}
+      <main className="container pb-16">
+        {isError && (
+          <p className="text-muted-foreground text-center py-12">
+            Something went wrong loading posts. Please try again later.
           </p>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-16">
+          {isLoading
+            ? Array.from({ length: 4 }).map((_, i) => <PostCardSkeleton key={i} />)
+            : filteredPosts.map((post) => <PostCard key={post.slug} post={post} />)}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+
+        {!isLoading && filteredPosts.length === 0 && (
+          <p className="text-muted-foreground text-center py-12">
+            No posts in this category yet.
+          </p>
+        )}
       </main>
+
+      <Footer />
+
     </div>
   );
 }
