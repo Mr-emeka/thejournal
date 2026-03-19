@@ -1,4 +1,16 @@
+# The Journal
+
+## The journal is a next js 16 blog template to "Start a budget Friendly Blog 2026"
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+## Landing Page
+
+<img src="https://raw.githubusercontent.com/Mr-emeka/thejournal/e27a2738a9a5b7d864beb3a27b2666c20eaba8b4/assets/landing.png" width="600" alt="Landing page" />
+
+## Blog Details
+
+<img src="https://raw.githubusercontent.com/Mr-emeka/thejournal/e27a2738a9a5b7d864beb3a27b2666c20eaba8b4/assets/blog-details.png" width="600" alt="Blog Details" />
 
 ## Getting Started
 
