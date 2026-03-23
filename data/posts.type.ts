@@ -1,7 +1,7 @@
 // Raw WordPress GraphQL response types
 export interface WPImage {
   sourceUrl: string;
-  altText: string;
+  altText?: string;
 }
 
 export interface WPCategory {

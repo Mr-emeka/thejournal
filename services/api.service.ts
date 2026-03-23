@@ -1,12 +1,15 @@
-const fetchAPI = async (query: string, { variables }: Record<string, unknown> = {}) => {
-  const headers = { 
+const fetchAPI = async (
+  query: string,
+  { variables }: { variables?: Record<string, unknown> } = {},
+) => {
+  const headers = {
     "Content-Type": "application/json",
   };
 
   const res = await fetch(process.env.NEXT_PUBLIC_BLOG_GRAPHQL_ENDPOINT!, {
     method: "POST",
     headers,
-    body: JSON.stringify({ query, variables })
+    body: JSON.stringify({ query, variables }),
   });
 
   if (!res.ok) {
