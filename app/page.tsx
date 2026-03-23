@@ -6,7 +6,7 @@ import PostCardSkeleton from "@/components/PostCardSkeleton";
 import { WPCategory, WPPost } from "@/data/posts.type";
 import { getAllPosts, getAllPostsCategories } from "@/services/blog.service";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState<number | null>(null);
@@ -27,22 +27,6 @@ export default function Home() {
     queryKey: ["categories"],
     queryFn: () => getAllPostsCategories(),
   });
-
-  // filtering post by active category
-  const filteredPosts = useMemo(() => {
-    // if there is no post return empty array
-    if (!posts) return [];
-
-    // if there is no active category return posts
-    if (!activeCategory) return posts;
-
-    // map through posts and filter
-    return posts?.filter((p) => {
-      // get out the post category
-      const category = p.categories.nodes.map((c) => c)[0];
-      return category.databaseId === activeCategory;
-    });
-  }, [posts, activeCategory]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -99,12 +83,12 @@ export default function Home() {
             ? Array.from({ length: 4 }).map((_, i) => (
                 <PostCardSkeleton key={i} />
               ))
-            : filteredPosts.map((post: WPPost) => (
+            : posts?.map((post: WPPost) => (
                 <PostCard key={post.slug} post={post} />
               ))}
         </div>
 
-        {!isLoading && filteredPosts.length === 0 && (
+        {!isLoading && posts?.length === 0 && (
           <p className="text-muted-foreground text-center py-12">
             No posts in this category yet.
           </p>
