@@ -23,7 +23,6 @@ export const getAllPosts = async (category?: number): Promise<WPPost[]> => {
       categoryId: category ?? null,
     },
   });
-  console.log("data", data);
 
   return data.posts.edges.map(({ node }) => node);
 };
@@ -81,7 +80,7 @@ export const getAllPostsCategories = async () => {
     id: node.id,
     name: node.name,
     databaseId: node.databaseId,
-  }));
+  })) ?? [];
 };
 
 export const getRelatedPosts = async (
@@ -92,7 +91,5 @@ export const getRelatedPosts = async (
   const data: WPPostsResponse = await fetchAPI(getRelatedPostsQuery, {
     variables: { categoryId, first },
   });
-  console.log("related posts data", data);
-  console.log('excludeSlug', excludeSlug);
   return data.posts.edges.filter(({ node }) => node.slug !== excludeSlug);
 };
